@@ -2,7 +2,8 @@ CFLAGS= -std=c++11
 
 all: 	coordinator \
 	client \
-	cashier
+	cashier \
+	server
 
 coordinator: coordinator.o shared.o
 	g++ $(CFLAGS) coordinator.o shared.o -o coordinator -lpthread
@@ -12,6 +13,12 @@ client: client.o shared.o
 
 cashier: cashier.o shared.o
 	g++ $(CFLAGS) cashier.o shared.o -o cashier -lpthread
+
+server: server.o shared.o
+	g++ $(CFLAGS) server.o shared.o -o server -lpthread
+
+server.o: server.cpp shared.h
+	g++ $(CFLAGS) server.cpp -o server.o -c
 
 cashier.o: cashier.cpp shared.h
 	g++ $(CFLAGS) cashier.cpp -o cashier.o -c
