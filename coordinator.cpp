@@ -22,14 +22,14 @@ int main(int argc, char *argv[]) {
     perror("Shmget could not create segment");
     exit(1);
   }
-  printf("Creating shared memory with SHMID: %d\n",shmid);
+  D printf("Creating shared memory with SHMID: %d\n",shmid);
 
   /* Attaches the shared memory with id shmid*/
   if ((shmaddr = shmat(shmid, NULL, 0)) == (char *)-1){
     perror("shmat could not attach");
     exit(1);
   }
-  printf("Attached shared memory with SHMID: %d\n",shmid);
+  D printf("Attached shared memory with SHMID: %d\n",shmid);
 
   /* Convert shmaddr pointer to our data pointer. */
   shmdata = (struct sharedData *)shmaddr;
@@ -40,14 +40,14 @@ int main(int argc, char *argv[]) {
     perror("shm could be removed");
     exit(1);
   }
-  printf("Marked memory with SHMID to be removed when last process detaches: %d\n",shmid);
+  D printf("Marked memory with SHMID to be removed when last process detaches: %d\n",shmid);
 
   /* Detach our shared memory */
   if (shmdt(shmaddr) == -1){
     perror("shm could not detach");
     exit(1);
   }
-  printf("Detached shared memory with SHMID: %d\n",shmid);
+  D printf("Detached shared memory with SHMID: %d\n",shmid);
 
   /* Initialize our semaphores */
   sem_t *sem=sem_open(SNAME1, O_CREAT, 0644, 10);
@@ -55,7 +55,8 @@ int main(int argc, char *argv[]) {
     perror("Failed to open semaphore");
     exit(-1);
   }
-  printf("Created and incremented semaphore: %s\n",SNAME1);
+
+  D printf("Created and incremented semaphore: %s\n",SNAME1);
   int value;
   if (sem_getvalue(sem, &value) == -1){
     perror("Could not get value of semaphore");

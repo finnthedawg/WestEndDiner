@@ -9,13 +9,13 @@ coordinator: coordinator.o shared.o
 client: client.o shared.o
 	g++ $(CFLAGS) client.o shared.o -o client -lpthread
 
-client.o: client.cpp
+client.o: client.cpp shared.h
 	g++ $(CFLAGS) client.cpp -o client.o -c
 
-coordinator.o: coordinator.cpp
+coordinator.o: coordinator.cpp shared.h
 	g++ $(CFLAGS) coordinator.cpp -o coordinator.o -c
 
-shared.o: shared.cpp
+shared.o: shared.cpp shared.h
 	g++ $(CFLAGS) shared.cpp -o shared.o -c
 
 clean:

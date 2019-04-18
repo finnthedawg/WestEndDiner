@@ -11,6 +11,9 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
+
+
+
   sem_t *sem = sem_open(SNAME1, 0);
   int value = 0;
   if (sem_getvalue(sem, &value) == -1){
