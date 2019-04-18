@@ -5,16 +5,25 @@
 #include <fcntl.h>           /* For O_* constants */
 #include <sys/stat.h>        /* For mode constants */
 #include <semaphore.h>
+#include <unistd.h>          /* Parse flags */
+#include <stdlib.h>           /* rand functions  */
+#include <time.h>
 
 #include "shared.h"
 
 using namespace std;
-
+/* Options: ./client -i itemId -e eatTime -m shmid */
 int main(int argc, char *argv[]) {
+
+  /* Some default client values */
+  int itemId = 9;
+  int eatTime = 10;
+  int shmid;
+
+
 
   /* Initialize our shared memory segment */
   struct sharedData *shmdata; //Our data struct stored in shared memory
-  int shmid;
   void *shmaddr; /* Pointer to head of shm*/
 
   /* Load our previous SHM associated with SHMKEY*/
@@ -25,14 +34,11 @@ int main(int argc, char *argv[]) {
   D printf("Creating shared memory with SHMID: %d\n",shmid);
 
   /* Attaches the shared memory with id shmid*/
-  if ((shmaddr = shmat(shmid, NULL, 0)) == (char *)-1){
+  if ((shmdata = (struct sharedData *)shmat(shmid, NULL, 0)) == (struct sharedData *)-1){
     perror("shmat could not attach");
     exit(1);
   }
   D printf("Attached shared memory with SHMID: %d\n",shmid);
-
-  /* Convert shmaddr pointer to our data pointer. */
-  shmdata = (struct sharedData *)shmaddr;
 
   /*Before entering the queue, check the number of people */
   sem_wait(&shmdata -> lock_sem);
