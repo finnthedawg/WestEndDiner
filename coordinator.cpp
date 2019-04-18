@@ -3,7 +3,7 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
-#include <sys/sem.h>
+#include <semaphore.h>
 
 #include "shared.h"
 
@@ -28,6 +28,7 @@ int main(int argc, char *argv[]) {
   printf("Attached shared memory with SHMID: %d\n",shmid);
 
   /* Create the required semaphores */
+  sem_t *sem = sem_open(SNAME1, IPC_CREAT, 0644, 0); /* Initial value is 0. */
 
 
 
