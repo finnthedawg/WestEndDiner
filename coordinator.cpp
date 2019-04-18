@@ -1,8 +1,9 @@
-#include<iostream>
-#include<string>
-#include <sys/types.h>
+#include <iostream>
+#include <string>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <fcntl.h>           /* For O_* constants */
+#include <sys/stat.h>        /* For mode constants */
 #include <semaphore.h>
 
 #include "shared.h"
@@ -27,8 +28,18 @@ int main(int argc, char *argv[]) {
   }
   printf("Attached shared memory with SHMID: %d\n",shmid);
 
-  /* Create the required semaphores */
-  sem_t *sem = sem_open(SNAME1, IPC_CREAT, 0644, 0); /* Initial value is 0. */
+  sem_t *sem=sem_open(SNAME1, O_CREAT, 0644, 0);
+  if (sem == SEM_FAILED){
+    perror("Failed to open semaphore");
+    exit(-1);
+  }
+  sem_post(sem);
+  printf("Created and incremented semaphore: %s\n",SNAME1);
+  int value;
+  if (sem_getvalue(sem, &value) == -1){
+    perror("Could not get value of semaphore");
+  }
+  cout << "Semaphore value is: " << value << endl;
 
 
 

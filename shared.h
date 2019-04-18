@@ -3,4 +3,4 @@
 #define SHMKEY (key_t)6666 //Key used to create SHM
 
 #define SEM_PERMS 0644
-#define SNAME1 "NUM_CLIENT_SEM"
+#define SNAME1 "/NUM_CLIENT_SEM"
