@@ -22,7 +22,32 @@ char* findDescriptionMenu(int Id, std::vector<struct item> &menuList){
   return(nullptr);
 }
 
+float findPriceMenu(int Id, std::vector<struct item> &menuList){
+  for (int i = 0; i < menuList.size(); i++){
+    if (menuList[i].itemId == Id){
+      return(menuList[i].price);
+    }
+  }
+  return(-1);
+}
 
+int findMin_timeMenu(int Id, std::vector<struct item> &menuList){
+  for (int i = 0; i < menuList.size(); i++){
+    if (menuList[i].itemId == Id){
+      return(menuList[i].min_time);
+    }
+  }
+  return(-1);
+}
+
+int findMax_timeMenu(int Id, std::vector<struct item> &menuList){
+  for (int i = 0; i < menuList.size(); i++){
+    if (menuList[i].itemId == Id){
+      return(menuList[i].max_time);
+    }
+  }
+  return(-1);
+}
 
 /*Adds a single item to our item vector*/
 void loadMenu(const char* filename, std::vector<struct item> &menuList){
