@@ -51,8 +51,18 @@ int main(int argc, char *argv[]) {
   /* load the menu (Vector of items) */
   vector<struct item> menuList;
   loadMenu("menu.txt", menuList);
+  float price = findPriceMenu(itemId,menuList);
+  if(price == -1){
+    perror("Unable to read menu\n");
+    exit(1);
+  }
+  int min_time = findMin_timeMenu(itemId,menuList);
+  int max_time = findMax_timeMenu(itemId,menuList);
+  int cooking_time = (rand() % (max_time-min_time)) + min_time;
+  char description[STRLEN];
+  strcpy(description, findDescriptionMenu(itemId,menuList));
   printf("I finished reading the menu\n");
-  printf("%s\n", findDescriptionMenu(16,menuList));
+  printf("My order is %s, costs %f and will take %d seconds to cook.\n", description, price, cooking_time);
 
   /* Initialize our shared memory segment */
   struct sharedData *shmdata; //Our data struct stored in shared memory
@@ -105,11 +115,11 @@ int main(int argc, char *argv[]) {
   sem_post(&shmdata -> cashier_signal);
   printf("Cashier called us, and we submitted order. Waiting to be serviced \n");
   sem_wait(&getClientById(getpid(), shmdata->clients)->paid_sem);
-  printf("Cashier has finished serviced us. \n");
+  printf("Cashier has finally serviced us and took our money. \n");
 
   /* Wait for food to be cooked */
-  printf("Waiting for food to be cooked... \n");
-  sleep(5);
+  printf("Waiting for %s to be cooked... \n", description);
+  sleep(cooking_time);
   printf("Food is ready... \n");
 
   /*Wait in server_queue_sem until a cashier is ready */

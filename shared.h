@@ -24,6 +24,9 @@ struct clientData * getClientById(int Id, struct clientData* shmdata);
 /* Searches for itemID from our comma seperated menu. */
 /* Format: itemID,Description,Price,Min_time,Maxtime */
 char* findDescriptionMenu(int Id, std::vector<struct item> &menuList);
+float findPriceMenu(int Id, std::vector<struct item> &menuList);
+int findMin_timeMenu(int Id, std::vector<struct item> &menuList);
+int findMax_timeMenu(int Id, std::vector<struct item> &menuList);
 void loadMenu(const char* filename, std::vector<struct item> &menuList);
 static struct item createStruct(char* itemLine);
 
