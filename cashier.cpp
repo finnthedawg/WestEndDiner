@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
     if (total_queue_sem > 0){
       D printf("Cashier told customer to tell her order information.\n");
       sem_wait(&shmdata -> total_queue_sem); //Removes this client from the queue.
-      sem_post(&shmdata -> queue_sem); //Tells client to come over.
+      sem_post(&shmdata -> cashier_queue_sem); //Tells client to come over.
       sem_wait(&shmdata -> cashier_signal); //Wait for the client to come over and submit order (PID info)
 
       D printf("Customer submitted information\n");

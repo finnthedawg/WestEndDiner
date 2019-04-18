@@ -47,8 +47,8 @@ int main(int argc, char *argv[]) {
     perror("Failed to initialize totalserved_sem");
     exit(-1);
   }
-  if (sem_init(&shmdata -> queue_sem,1,0) == -1){
-    perror("Failed to initialize queue_sem");
+  if (sem_init(&shmdata -> cashier_queue_sem,1,0) == -1){
+    perror("Failed to initialize cashier_queue_sem");
     exit(-1);
   }
   if (sem_init(&shmdata -> cashier_signal,1,0) == -1){

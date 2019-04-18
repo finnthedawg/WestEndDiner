@@ -89,12 +89,12 @@ int main(int argc, char *argv[]) {
   sem_post(&shmdata -> total_queue_sem);
   sem_post(&shmdata -> lock_sem);
 
-  /*Wait in queue_sem until a cashier is ready */
+  /*Wait in cashier_queue_sem until a cashier is ready */
   printf("Waiting in queue for cashier. Position(%d) \n", total_queue_sem);
-  sem_wait(&shmdata -> queue_sem); //Cashier calls  us
+  sem_wait(&shmdata -> cashier_queue_sem); //Cashier calls  us
   shmdata->clientpid = getpid();
   sem_post(&shmdata -> cashier_signal);
-  printf("Cashier called called us. And we submitted order. Waiting to be serviced \n");
+  printf("Cashier called us, and we submitted order. Waiting to be serviced \n");
   sem_wait(&getClientById(getpid(), shmdata->clients)->paid_sem);
   printf("Cashier has serviced us. \n");
 
