@@ -4,3 +4,9 @@
 
 #define SEM_PERMS 0644
 #define SNAME1 "/NUM_CLIENT_SEM"
+#include <string>
+
+struct cashierMem{
+  int client_id;
+  std::string name;
+};

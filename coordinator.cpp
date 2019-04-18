@@ -41,6 +41,8 @@ int main(int argc, char *argv[]) {
   }
   printf("Detached shared memory with SHMID: %d\n",shmid);
 
+  cashierMem cashier;
+
   /* Initialize our semaphores */
   sem_t *sem=sem_open(SNAME1, O_CREAT, 0644, 10);
   if (sem == SEM_FAILED){
