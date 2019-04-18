@@ -79,18 +79,18 @@ int main(int argc, char *argv[]) {
     exit(0);
   }
   /* Adds information to clients array */
-  shmdata->clients[shmdata->numclients].pid = getpid();
   if (sem_init(&shmdata->clients[shmdata->numclients].paid_sem,1,0) == -1){
     perror("Failed to initialize semaphore of client in array");
     exit(-1);
   }
+  shmdata->clients[shmdata->numclients].pid = getpid();
   shmdata->numclients ++;
   sem_post(&shmdata -> total_queue_sem);
   sem_post(&shmdata -> lock_sem);
 
   /*Wait in queue_sem until a cashier is ready */
   printf("Waiting in queue for cashier. Position(%d) \n", total_queue_sem);
-  sem_wait(&shmdata -> queue_sem);
+  sem_wait(&shmdata -> queue_sem); //Cashier calls  us
   shmdata->clientpid = getpid();
   sem_post(&shmdata -> cashier_signal);
   printf("Cashier called called us. And we submitted order. Waiting to be serviced \n");
