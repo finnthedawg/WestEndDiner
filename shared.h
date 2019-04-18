@@ -13,23 +13,28 @@
 #define STRLEN 1024
 #include <semaphore.h>
 
-
 /* Information about the client  */
 struct clientData{
   int pid;
   int itemID;
   int value;
   int timeSpent;
-  sem_t cashier_sem; // Initialized to 0 for each client. Incremented by cashier.
+  sem_t paid_sem; //Cashier will signal when client has paid.
 };
 
 struct sharedData{
   char name[STRLEN];
   sem_t lock_sem; //Initialized to 1. Lock the sharedData ensuring only one process can use shared.
-  sem_t coordinator_sem; //Initialized to 0. Signal when last client leaves.
-  sem_t total_queue_sem; //Initialized to 0. Incremented by clients entering queue. Decremented by cashier.
-  sem_t queue_sem; //Intialized to 0. Decremented by new clients to wait. Incremented by cashier.
+  sem_t cashier_lock_sem; //Initialized to 1. Lock the cashier so only one cashier is operating
+
   sem_t totalserved_sem; //Initialized to 0. Incremented by new clients when leaving. Last client checks if equal to TOTALPEOPLE
-  struct clientData cashierSHM; //ClientData will be put here awaiting for cashier to retrieve.
-  struct clientData clients[TOTALPEOPLE]; //Summary information of clients.
+  sem_t coordinator_sem; //Initialized to 0. Signal by last client.
+
+  sem_t total_queue_sem; //Initialized to 0. Incremented by clients entering queue. Decremented by cashier.
+  sem_t queue_sem; //Initialized to 0. Decremented by clients in queue. Incremented by cashier when ready.
+  sem_t cashier_signal; //Initialized to 0. Cashier waits for the chosen client to finish submitting info.
+
+  int clientpid; //clientpid will be put here awaiting for cashier to retrieve.
+  int numclients; //Number of clients
+  struct clientData clients[TOTALPEOPLE]; //Client info is found here
 };

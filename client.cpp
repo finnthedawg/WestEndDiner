@@ -5,9 +5,10 @@
 #include <fcntl.h>           /* For O_* constants */
 #include <sys/stat.h>        /* For mode constants */
 #include <semaphore.h>
-#include <unistd.h>          /* Parse flags */
+#include <unistd.h>          /* Parse flags, getpid() */
 #include <stdlib.h>           /* rand functions  */
 #include <time.h>
+#include <string.h>
 
 #include "shared.h"
 
@@ -44,6 +45,8 @@ int main(int argc, char *argv[]) {
   srand(time(0)); //randomize with time seed
   eatTime = rand() % eatTime;
 
+  printf("I am client %d, ordering itemID %d, eatTime is %d\n", getpid(), itemId, eatTime);
+
   /* Initialize our shared memory segment */
   struct sharedData *shmdata; //Our data struct stored in shared memory
   void *shmaddr; /* Pointer to head of shm*/
@@ -64,7 +67,7 @@ int main(int argc, char *argv[]) {
 
   /*Before entering the queue, check the number of people */
   sem_wait(&shmdata -> lock_sem);
-  int total_queue_sem = 0;
+  int total_queue_sem;
   if (sem_getvalue(&shmdata -> total_queue_sem, &total_queue_sem) == -1){
     perror("Could not get value of semaphore");
     sem_post(&shmdata -> lock_sem);
@@ -75,11 +78,23 @@ int main(int argc, char *argv[]) {
     sem_post(&shmdata -> lock_sem);
     exit(0);
   }
+  /* Adds information to clients array */
+  shmdata->clients[shmdata->numclients].pid = getpid();
+  if (sem_init(&shmdata->clients[shmdata->numclients].paid_sem,1,0) == -1){
+    perror("Failed to initialize semaphore of client in array");
+    exit(-1);
+  }
+  shmdata->numclients ++;
   sem_post(&shmdata -> total_queue_sem);
   sem_post(&shmdata -> lock_sem);
 
   /*Wait in queue_sem until a cashier is ready */
   printf("Waiting in queue for cashier. Position(%d) \n", total_queue_sem);
   sem_wait(&shmdata -> queue_sem);
+  shmdata->clientpid = getpid();
+  sem_post(&shmdata -> cashier_signal);
+  printf("Cashier called called us. And we submitted order. Waiting to be serviced \n");
+  sem_wait(&shmdata->clients[0].paid_sem);
+  printf("Cashier has serviced us. \n");
 
 }

@@ -5,6 +5,8 @@
 #include <fcntl.h>           /* For O_* constants */
 #include <sys/stat.h>        /* For mode constants */
 #include <semaphore.h>
+#include <unistd.h>
+#include <string.h>
 
 #include "shared.h"
 
@@ -28,7 +30,42 @@ int main(int argc, char *argv[]) {
     perror("shmat could not attach");
     exit(1);
   }
-  D printf("Attached shared memory with SHMID: %d\n",shmid);
 
+  sem_t testing;
+  memcpy(&testing, &shmdata->total_queue_sem, sizeof(sem_t));
+  sem_post(&testing);
+  sem_post(&testing);
+  sem_post(&testing);
+  sem_post(&testing);
+
+  while(1){
+    sem_wait(&shmdata -> cashier_lock_sem); //Acquire lock for cashier.
+    int total_queue_sem;
+    if (sem_getvalue(&shmdata -> total_queue_sem, &total_queue_sem) == -1){
+      perror("Could not get value of semaphore");
+      sem_post(&shmdata -> cashier_lock_sem);
+      exit(1);
+    }
+    /* If there are clients waiting then signal that cashier is ready. */
+    if (total_queue_sem > 0){
+      D printf("Cashier told customer to tell her order information.\n");
+      sem_wait(&shmdata -> total_queue_sem); //Removes this client from the queue.
+      sem_post(&shmdata -> queue_sem); //Tells client to come over.
+      sem_wait(&shmdata -> cashier_signal); //Wait for the client to come over and submit order (semaphore)
+      D printf("Customer submitted information\n");
+      int pid = shmdata -> clientpid; //Remember this client.
+      sem_post(&shmdata -> cashier_lock_sem); //Unlock cashiers and lets other cashiers call people.
+      printf("Servicing the client: %d\n", pid);
+      sleep(5); //Serve the client.
+      sem_post(&shmdata->clients[0].paid_sem);
+      printf("Done servicing the client: %d\n",pid);
+    } else {
+      /* Otherwise, we take a break and unlock control.*/
+      D printf("There is nobody in queue, taking a break. \n");
+      sem_post(&shmdata -> cashier_lock_sem); //Unlock this cashier
+      sleep(5);
+    }
+
+  }
 
 }

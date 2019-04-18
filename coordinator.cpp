@@ -43,24 +43,31 @@ int main(int argc, char *argv[]) {
     perror("Failed to initialize total_queue_sem");
     exit(-1);
   }
+  if (sem_init(&shmdata -> totalserved_sem,1,0) == -1){
+    perror("Failed to initialize totalserved_sem");
+    exit(-1);
+  }
   if (sem_init(&shmdata -> queue_sem,1,0) == -1){
     perror("Failed to initialize queue_sem");
     exit(-1);
   }
-  if (sem_init(&shmdata -> totalserved_sem,1,0) == -1){
-    perror("Failed to initialize totalserved_sem");
+  if (sem_init(&shmdata -> cashier_signal,1,0) == -1){
+    perror("Failed to initialize cashier_signal");
     exit(-1);
   }
   if (sem_init(&shmdata -> lock_sem,1,1) == -1){
     perror("Failed to initialize lock_sem");
     exit(-1);
   }
+  if (sem_init(&shmdata -> cashier_lock_sem,1,1) == -1){
+    perror("Failed to initialize lock_sem");
+    exit(-1);
+  }
   D printf("Initialized all semaphores: %d\n",shmid);
 
-  /* Initialize client array PID to 0.*/
-  for (int i = 0; i < TOTALPEOPLE; i ++){
-    shmdata->clients[i].pid = 0;
-  }
+  /* Initialize client array size to 0.*/
+  shmdata->numclients = 0;
+
   D printf("Initialized all clients. \n");
   printf("Completed initialization. shmid is: %d\n",shmid);
 
