@@ -81,6 +81,7 @@ int main(int argc, char *argv[]) {
   /* Adds information to clients array */
   if (sem_init(&shmdata->clients[shmdata->numclients].paid_sem,1,0) == -1){
     perror("Failed to initialize semaphore of client in array");
+    sem_post(&shmdata -> lock_sem);
     exit(-1);
   }
   shmdata->clients[shmdata->numclients].pid = getpid();
