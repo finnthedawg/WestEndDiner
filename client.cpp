@@ -6,7 +6,7 @@
 #include <sys/stat.h>        /* For mode constants */
 #include <semaphore.h>
 #include <unistd.h>          /* Parse flags, getpid() */
-#include <stdlib.h>           /* rand functions  */
+#include <stdlib.h>           /* rand() functions  */
 #include <time.h>
 #include <string.h>
 
