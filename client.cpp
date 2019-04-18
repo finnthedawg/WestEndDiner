@@ -68,8 +68,9 @@ int main(int argc, char *argv[]) {
   /*Before entering the queue, check the number of people */
   sem_wait(&shmdata -> lock_sem);
   int total_cashier_queue_sem;
+  int total_server_queue_sem;
   if (sem_getvalue(&shmdata -> total_cashier_queue_sem, &total_cashier_queue_sem) == -1){
-    perror("Could not get value of semaphore");
+    perror("Could not get value of total_cashier_queue_sem");
     sem_post(&shmdata -> lock_sem);
     exit(1);
   }
@@ -89,13 +90,36 @@ int main(int argc, char *argv[]) {
   sem_post(&shmdata -> total_cashier_queue_sem);
   sem_post(&shmdata -> lock_sem);
 
+
   /*Wait in cashier_queue_sem until a cashier is ready */
-  printf("Waiting in queue for cashier. Position(%d) \n", total_cashier_queue_sem);
+  printf("Waiting in queue for cashier. Position(%d) \n", total_cashier_queue_sem+1);
   sem_wait(&shmdata -> cashier_queue_sem); //Cashier calls  us
   shmdata->clientpid = getpid();
   sem_post(&shmdata -> cashier_signal);
   printf("Cashier called us, and we submitted order. Waiting to be serviced \n");
   sem_wait(&getClientById(getpid(), shmdata->clients)->paid_sem);
-  printf("Cashier has serviced us. \n");
+  printf("Cashier has finished serviced us. \n");
 
+  /* Wait for food to be cooked */
+  printf("Waiting for food to be cooked... \n");
+  sleep(5);
+  printf("Food is ready... \n");
+
+  /*Wait in server_queue_sem until a cashier is ready */
+  if (sem_getvalue(&shmdata -> total_server_queue_sem, &total_server_queue_sem) == -1){
+    perror("Could not get value of total_server_queue_sem");
+    sem_post(&shmdata -> lock_sem);
+    exit(1);
+  }
+  printf("Waiting to be seated by server. Position(%d) \n", total_server_queue_sem+1);
+  sem_post(&shmdata -> total_server_queue_sem);
+  sem_wait(&shmdata -> server_queue_sem);
+  printf("Server called us. \n");
+  sem_wait(&shmdata -> client_signal);
+  printf("Server has finished seating us. \n");
+
+  printf("Begin eating... \n");
+  sleep(eatTime);
+  printf("Finished eating! \n");
+  printf("Client has left the restaurant \n");
 }
