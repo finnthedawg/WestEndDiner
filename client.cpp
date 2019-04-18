@@ -9,6 +9,7 @@
 #include <stdlib.h>           /* rand() functions  */
 #include <time.h>
 #include <string.h>
+#include <vector>
 
 #include "shared.h"
 
@@ -46,6 +47,11 @@ int main(int argc, char *argv[]) {
   eatTime = rand() % eatTime;
 
   printf("I am client %d, ordering itemID %d, eatTime is %d\n", getpid(), itemId, eatTime);
+
+  /* load the menu (Vector of items) */
+  vector<struct item> menuList;
+  loadMenu("menu.txt", menuList);
+  printf("I finished reading the menu\n");
 
   /* Initialize our shared memory segment */
   struct sharedData *shmdata; //Our data struct stored in shared memory
