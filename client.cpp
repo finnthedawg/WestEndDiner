@@ -52,6 +52,7 @@ int main(int argc, char *argv[]) {
   vector<struct item> menuList;
   loadMenu("menu.txt", menuList);
   printf("I finished reading the menu\n");
+  printf("%s\n", findDescriptionMenu(16,menuList));
 
   /* Initialize our shared memory segment */
   struct sharedData *shmdata; //Our data struct stored in shared memory

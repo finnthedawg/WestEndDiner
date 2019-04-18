@@ -1,6 +1,3 @@
-#include <iostream>
-#include <string.h>
-#include <stdlib.h> //atoi and other library functions
 #include "shared.h"
 
 /* Searches for ID in clientData array. Returns nullptr if not found */
@@ -15,9 +12,17 @@ struct clientData * getClientById(int Id, struct clientData* shmdata){
 }
 
 /* Menu: itemID,Description,Price,Min_time,Maxtime */
-/* Searches for itemID from our  */
+/* Searches for itemID from our  menuList and returns the description*/
 char* findDescriptionMenu(int Id, std::vector<struct item> &menuList){
+  for (int i = 0; i < menuList.size(); i++){
+    if (menuList[i].itemId == Id){
+      return(menuList[i].description);
+    }
+  }
+  return(nullptr);
 }
+
+
 
 /*Adds a single item to our item vector*/
 void loadMenu(const char* filename, std::vector<struct item> &menuList){

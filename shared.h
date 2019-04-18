@@ -13,6 +13,10 @@
 #define STRLEN 1024
 #include <semaphore.h>
 #include <vector>
+#include <iostream>
+#include <string.h>
+#include <stdlib.h> //atoi and other library functions
+#include <algorithm>
 
 /* Searches for ID in clientData array. Returns nullptr if not found */
 struct clientData * getClientById(int Id, struct clientData* shmdata);
