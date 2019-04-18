@@ -12,15 +12,16 @@
 #define SEM_PERMS 0644 //Permission levels of semaphores.
 #define STRLEN 1024
 #include <semaphore.h>
-
+#include <vector>
 
 /* Searches for ID in clientData array. Returns nullptr if not found */
 struct clientData * getClientById(int Id, struct clientData* shmdata);
 
 /* Searches for itemID from our comma seperated menu. */
 /* Format: itemID,Description,Price,Min_time,Maxtime */
-char* findDescriptionMenu(int Id, char* path, struct item* items);
-
+char* findDescriptionMenu(int Id, std::vector<struct item> &menuList);
+void loadMenu(const char* filename, std::vector<struct item> &menuList);
+static struct item createStruct(char* itemLine);
 
 /* Information about the client  */
 struct clientData{
@@ -50,7 +51,7 @@ struct sharedData{
   struct clientData clients[TOTALPEOPLE]; //Client info is found here
 };
 
-/* struct for item on the menu */
+/* struct for item on the menu vector */
 struct item{
   int itemId;
   char description[STRLEN];
