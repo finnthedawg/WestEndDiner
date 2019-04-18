@@ -1,5 +1,5 @@
 #include <iostream>
-#include <string>
+#include <string.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <fcntl.h>           /* For O_* constants */
@@ -11,8 +11,7 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
-
-  /* Initialize our shared memory segment */
+  string waitInput;
   struct sharedData *shmdata; //Our data struct stored in shared memory
   int shmid;
   void *shmaddr; /* Pointer to head of shm*/
@@ -33,9 +32,33 @@ int main(int argc, char *argv[]) {
 
   /* Convert shmaddr pointer to our data pointer. */
   shmdata = (struct sharedData *)shmaddr;
-  shmdata -> name = "Testing";
+  sprintf(shmdata -> name, "Testing");
 
-  /*Sends command to the SHM. IPC RMID = mark the segment to be destroyed*/
+  /* Initialize semaphores in shared memory*/
+  if (sem_init(&shmdata -> coordinator_sem,1,0) == -1){
+    perror("Failed to initialize coordinator_sem");
+    exit(-1);
+  }
+  if (sem_init(&shmdata -> total_queue_sem,1,0) == -1){
+    perror("Failed to initialize total_queue_sem");
+    exit(-1);
+  }
+  if (sem_init(&shmdata -> queue_sem,1,0) == -1){
+    perror("Failed to initialize queue_sem");
+    exit(-1);
+  }
+  if (sem_init(&shmdata -> totalserved_sem,1,0) == -1){
+    perror("Failed to initialize totalserved_sem");
+    exit(-1);
+  }
+  D printf("Initialized all SHM semaphores: %d\n",shmid);
+
+  //memcpy(&shmdata -> TOTAL_SERVED_SEM, sem, sizeof(*sem));
+
+
+
+  cin >> waitInput;
+  /*Mark SHM to be destroyed*/
   if (shmctl(shmid, IPC_RMID, 0) == -1){
     perror("shm could be removed");
     exit(1);
@@ -48,19 +71,5 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
   D printf("Detached shared memory with SHMID: %d\n",shmid);
-
-  /* Initialize our semaphores */
-  sem_t *sem=sem_open(SNAME1, O_CREAT, 0644, 10);
-  if (sem == SEM_FAILED){
-    perror("Failed to open semaphore");
-    exit(-1);
-  }
-
-  D printf("Created and incremented semaphore: %s\n",SNAME1);
-  int value;
-  if (sem_getvalue(sem, &value) == -1){
-    perror("Could not get value of semaphore");
-  }
-  cout << "Semaphore value is: " << value << endl;
 
 }
