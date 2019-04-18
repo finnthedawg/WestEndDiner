@@ -61,13 +61,6 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
-  sem_t testing;
-  memcpy(&testing, &shmdata->total_queue_sem, sizeof(sem_t));
-  sem_post(&testing);
-  sem_post(&testing);
-  sem_post(&testing);
-  sem_post(&testing);
-
   while(1){
     sem_wait(&shmdata -> cashier_lock_sem); //Acquire lock for cashier.
     int total_queue_sem;
