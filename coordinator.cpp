@@ -65,9 +65,11 @@ int main(int argc, char *argv[]) {
   }
   D printf("Initialized all semaphores: %d\n",shmid);
 
-  /* Initialize client array size to 0.*/
-  shmdata->numclients = 0;
-
+  /* Zero out the client array.*/
+  shmdata -> numclients = 0;
+  for (int i = 0; i < TOTALPEOPLE; i ++){
+    shmdata->clients[i].pid = -1;
+  }
   D printf("Initialized all clients. \n");
   printf("Completed initialization. shmid is: %d\n",shmid);
 

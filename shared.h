@@ -12,13 +12,12 @@
 #define SEM_PERMS 0644 //Permission levels of semaphores.
 #define STRLEN 1024
 #include <semaphore.h>
+/* Define some useful shared functions */
+struct clientData * getClientById(int Id, struct clientData* shmdata);
 
 /* Information about the client  */
 struct clientData{
   int pid;
-  int itemID;
-  int value;
-  int timeSpent;
   sem_t paid_sem; //Cashier will signal when client has paid.
 };
 

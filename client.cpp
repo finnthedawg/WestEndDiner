@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
   shmdata->clientpid = getpid();
   sem_post(&shmdata -> cashier_signal);
   printf("Cashier called called us. And we submitted order. Waiting to be serviced \n");
-  sem_wait(&shmdata->clients[0].paid_sem);
+  sem_wait(&getClientById(getpid(), shmdata->clients)->paid_sem);
   printf("Cashier has serviced us. \n");
 
 }

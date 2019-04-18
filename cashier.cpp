@@ -51,13 +51,15 @@ int main(int argc, char *argv[]) {
       D printf("Cashier told customer to tell her order information.\n");
       sem_wait(&shmdata -> total_queue_sem); //Removes this client from the queue.
       sem_post(&shmdata -> queue_sem); //Tells client to come over.
-      sem_wait(&shmdata -> cashier_signal); //Wait for the client to come over and submit order (semaphore)
+      sem_wait(&shmdata -> cashier_signal); //Wait for the client to come over and submit order (PID info)
+
       D printf("Customer submitted information\n");
       int pid = shmdata -> clientpid; //Remember this client.
       sem_post(&shmdata -> cashier_lock_sem); //Unlock cashiers and lets other cashiers call people.
+
       printf("Servicing the client: %d\n", pid);
       sleep(5); //Serve the client.
-      sem_post(&shmdata->clients[0].paid_sem);
+      sem_post(&getClientById(pid, shmdata->clients)->paid_sem);
       printf("Done servicing the client: %d\n",pid);
     } else {
       /* Otherwise, we take a break and unlock control.*/
