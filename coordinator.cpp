@@ -32,7 +32,6 @@ int main(int argc, char *argv[]) {
 
   /* Convert shmaddr pointer to our data pointer. */
   shmdata = (struct sharedData *)shmaddr;
-  sprintf(shmdata -> name, "Testing");
 
   /* Initialize semaphores in shared memory*/
   if (sem_init(&shmdata -> coordinator_sem,1,0) == -1){

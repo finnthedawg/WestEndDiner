@@ -12,8 +12,15 @@
 #define SEM_PERMS 0644 //Permission levels of semaphores.
 #define STRLEN 1024
 #include <semaphore.h>
-/* Define some useful shared functions */
+
+
+/* Searches for ID in clientData array. Returns nullptr if not found */
 struct clientData * getClientById(int Id, struct clientData* shmdata);
+
+/* Searches for itemID from our comma seperated menu. */
+/* Format: itemID,Description,Price,Min_time,Maxtime */
+char* findDescriptionMenu(int Id, char* path, struct item* items);
+
 
 /* Information about the client  */
 struct clientData{
@@ -21,8 +28,8 @@ struct clientData{
   sem_t paid_sem; //Cashier will signal when client has paid.
 };
 
+/* The main shared memory struct for all the processes */
 struct sharedData{
-  char name[STRLEN];
   sem_t lock_sem; //Initialized to 1. Lock the sharedData ensuring only one process can use shared.
   sem_t cashier_lock_sem; //Initialized to 1. Lock the cashier so only one cashier is operating
 
@@ -41,4 +48,13 @@ struct sharedData{
 
   int numclients; //Number of clients
   struct clientData clients[TOTALPEOPLE]; //Client info is found here
+};
+
+/* struct for item on the menu */
+struct item{
+  int itemId;
+  char description[STRLEN];
+  float price;
+  int min_time;
+  int max_time;
 };
