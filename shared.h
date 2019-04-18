@@ -32,8 +32,11 @@ struct sharedData{
   sem_t total_queue_sem; //Initialized to 0. Incremented by clients entering queue. Decremented by cashier.
   sem_t queue_sem; //Initialized to 0. Decremented by clients in queue. Incremented by cashier when ready.
   sem_t cashier_signal; //Initialized to 0. Cashier waits for the chosen client to finish submitting info.
-
   int clientpid; //clientpid will be put here awaiting for cashier to retrieve.
+
+  sem_t server_queue_sem; //Initialized to 0. Decrements by clients in queue.
+  int serverClientPid; //serverClientPid will be put here awaiting for server to retrieve.
+
   int numclients; //Number of clients
   struct clientData clients[TOTALPEOPLE]; //Client info is found here
 };

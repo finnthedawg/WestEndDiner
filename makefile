@@ -33,4 +33,4 @@ shared.o: shared.cpp shared.h
 	g++ $(CFLAGS) shared.cpp -o shared.o -c
 
 clean:
-	rm *.o coordinator client cashier
+	rm *.o coordinator client cashier server

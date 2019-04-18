@@ -60,7 +60,11 @@ int main(int argc, char *argv[]) {
     exit(-1);
   }
   if (sem_init(&shmdata -> cashier_lock_sem,1,1) == -1){
-    perror("Failed to initialize lock_sem");
+    perror("Failed to initialize cashier_lock_sem");
+    exit(-1);
+  }
+  if (sem_init(&shmdata -> server_queue_sem,1,1) == -1){
+    perror("Failed to initialize server_queue_sem");
     exit(-1);
   }
   D printf("Initialized all semaphores: %d\n",shmid);
