@@ -6,7 +6,11 @@
 #define SNAME1 "/NUM_CLIENT_SEM"
 #include <string>
 
-struct cashierMem{
-  int client_id;
+struct clientData{
+  int clientPid;
+};
+
+struct sharedData{
   std::string name;
+  struct clientData cashierSHM;
 };

@@ -13,20 +13,27 @@ using namespace std;
 int main(int argc, char *argv[]) {
 
   /* Initialize our shared memory segment */
-  int shmid; /* return value from shmget() */
-  void *shmaddr; /* shmat returns pointer shmaddr to head of shared segment*/
+  struct sharedData *shmdata; //Our data struct stored in shared memory
+  int shmid;
+  void *shmaddr; /* Pointer to head of shm*/
 
-  if ((shmid = shmget (SHMKEY, SHMSIZE, PERMS | IPC_CREAT)) < 0){
+  /* Create SHM with our shared SHMKEY*/
+  if ((shmid = shmget (SHMKEY, sizeof(struct sharedData), PERMS | IPC_CREAT)) < 0){
     perror("Shmget could not create segment");
     exit(1);
   }
   printf("Creating shared memory with SHMID: %d\n",shmid);
 
+  /* Attaches the shared memory with id shmid*/
   if ((shmaddr = shmat(shmid, NULL, 0)) == (char *)-1){
     perror("shmat could not attach");
     exit(1);
   }
   printf("Attached shared memory with SHMID: %d\n",shmid);
+
+  /* Convert shmaddr pointer to our data pointer. */
+  shmdata = (struct sharedData *)shmaddr;
+  shmdata -> name = "Testing";
 
   /*Sends command to the SHM. IPC RMID = mark the segment to be destroyed*/
   if (shmctl(shmid, IPC_RMID, 0) == -1){
@@ -35,13 +42,12 @@ int main(int argc, char *argv[]) {
   }
   printf("Marked memory with SHMID to be removed when last process detaches: %d\n",shmid);
 
+  /* Detach our shared memory */
   if (shmdt(shmaddr) == -1){
     perror("shm could not detach");
     exit(1);
   }
   printf("Detached shared memory with SHMID: %d\n",shmid);
-
-  cashierMem cashier;
 
   /* Initialize our semaphores */
   sem_t *sem=sem_open(SNAME1, O_CREAT, 0644, 10);
