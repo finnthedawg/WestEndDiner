@@ -33,11 +33,25 @@ int main(int argc, char *argv[]) {
 
   /* Convert shmaddr pointer to our data pointer. */
   shmdata = (struct sharedData *)shmaddr;
-  D cout << shmdata -> name << endl;
 
-  int value = 0;
-  if (sem_getvalue(&shmdata -> coordinator_sem, &value) == -1){
+  /*Before entering the queue, check the number of people */
+  sem_wait(&shmdata -> lock_sem);
+  int total_queue_sem = 0;
+  if (sem_getvalue(&shmdata -> total_queue_sem, &total_queue_sem) == -1){
     perror("Could not get value of semaphore");
+    sem_post(&shmdata -> lock_sem);
+    exit(1);
   }
-  cout << "Semaphore value is: " << value << endl;
+  if (total_queue_sem >= MAXQUEUE){
+    printf("Leaving because there are (%d) people in the queue. \n", total_queue_sem);
+    sem_post(&shmdata -> lock_sem);
+    exit(0);
+  }
+  sem_post(&shmdata -> total_queue_sem);
+  sem_post(&shmdata -> lock_sem);
+
+  /*Wait in queue_sem until a cashier is ready */
+  printf("Waiting in queue for cashier. Position(%d) \n", total_queue_sem);
+  sem_wait(&shmdata -> queue_sem);
+
 }

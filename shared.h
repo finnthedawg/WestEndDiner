@@ -5,7 +5,8 @@
  #define D if(0)
 #endif
 
-#define TOTALPEOPLE 10 //Total number of people that can be served by restaurant before shutting down
+#define TOTALPEOPLE 5 //Total number of people that can be served by restaurant before shutting down
+#define MAXQUEUE 3 //Maximum number of people in queue.
 #define PERMS 0600 //Permission levels of shared memory
 #define SHMKEY (key_t)6666 //Key used to create SHM
 #define SEM_PERMS 0644 //Permission levels of semaphores.
@@ -15,12 +16,16 @@
 
 /* Information about the client  */
 struct clientData{
-  int clientPid;
+  int pid;
+  int itemID;
+  int value;
+  int timeSpent;
   sem_t cashier_sem; // Initialized to 0 for each client. Incremented by cashier.
 };
 
 struct sharedData{
   char name[STRLEN];
+  sem_t lock_sem; //Initialized to 1. Lock the sharedData ensuring only one process can use shared.
   sem_t coordinator_sem; //Initialized to 0. Signal when last client leaves.
   sem_t total_queue_sem; //Initialized to 0. Incremented by clients entering queue. Decremented by cashier.
   sem_t queue_sem; //Intialized to 0. Decremented by new clients to wait. Incremented by cashier.
