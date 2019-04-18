@@ -20,7 +20,29 @@ int main(int argc, char *argv[]) {
   int eatTime = 10;
   int shmid;
 
-
+  /* Parse our arguments */
+  int opt;
+  while((opt = getopt(argc, argv, "i:e:m:")) != -1){
+    switch(opt){
+      case 'i':
+        printf("ItemId set to %s\n", optarg);
+        itemId = stoi(optarg);
+        break;
+      case 'e':
+        printf("Max eatTime set to %s\n", optarg);
+        eatTime = stoi(optarg);
+        break;
+      case 'm':
+        printf("Shmid set to %s\n", optarg);
+        shmid = stoi(optarg);
+        break;
+      case '?':
+        printf("Unknown flag: %s\n", optarg);
+        break;
+    }
+  }
+  srand(time(0)); //randomize with time seed
+  eatTime = rand() % eatTime;
 
   /* Initialize our shared memory segment */
   struct sharedData *shmdata; //Our data struct stored in shared memory
