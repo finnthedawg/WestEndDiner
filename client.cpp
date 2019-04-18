@@ -67,14 +67,14 @@ int main(int argc, char *argv[]) {
 
   /*Before entering the queue, check the number of people */
   sem_wait(&shmdata -> lock_sem);
-  int total_queue_sem;
-  if (sem_getvalue(&shmdata -> total_queue_sem, &total_queue_sem) == -1){
+  int total_cashier_queue_sem;
+  if (sem_getvalue(&shmdata -> total_cashier_queue_sem, &total_cashier_queue_sem) == -1){
     perror("Could not get value of semaphore");
     sem_post(&shmdata -> lock_sem);
     exit(1);
   }
-  if (total_queue_sem >= MAXQUEUE){
-    printf("Leaving because there are (%d) people in the queue. \n", total_queue_sem);
+  if (total_cashier_queue_sem >= MAXQUEUE){
+    printf("Leaving because there are (%d) people in the queue. \n", total_cashier_queue_sem);
     sem_post(&shmdata -> lock_sem);
     exit(0);
   }
@@ -86,11 +86,11 @@ int main(int argc, char *argv[]) {
   }
   shmdata->clients[shmdata->numclients].pid = getpid();
   shmdata->numclients ++;
-  sem_post(&shmdata -> total_queue_sem);
+  sem_post(&shmdata -> total_cashier_queue_sem);
   sem_post(&shmdata -> lock_sem);
 
   /*Wait in cashier_queue_sem until a cashier is ready */
-  printf("Waiting in queue for cashier. Position(%d) \n", total_queue_sem);
+  printf("Waiting in queue for cashier. Position(%d) \n", total_cashier_queue_sem);
   sem_wait(&shmdata -> cashier_queue_sem); //Cashier calls  us
   shmdata->clientpid = getpid();
   sem_post(&shmdata -> cashier_signal);

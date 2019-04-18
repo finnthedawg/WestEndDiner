@@ -63,16 +63,16 @@ int main(int argc, char *argv[]) {
 
   while(1){
     sem_wait(&shmdata -> cashier_lock_sem); //Acquire lock for cashier.
-    int total_queue_sem;
-    if (sem_getvalue(&shmdata -> total_queue_sem, &total_queue_sem) == -1){
+    int total_cashier_queue_sem;
+    if (sem_getvalue(&shmdata -> total_cashier_queue_sem, &total_cashier_queue_sem) == -1){
       perror("Could not get value of semaphore");
       sem_post(&shmdata -> cashier_lock_sem);
       exit(1);
     }
     /* If there are clients waiting then signal that cashier is ready. */
-    if (total_queue_sem > 0){
+    if (total_cashier_queue_sem > 0){
       D printf("Cashier told customer to tell her order information.\n");
-      sem_wait(&shmdata -> total_queue_sem); //Removes this client from the queue.
+      sem_wait(&shmdata -> total_cashier_queue_sem); //Removes this client from the queue.
       sem_post(&shmdata -> cashier_queue_sem); //Tells client to come over.
       sem_wait(&shmdata -> cashier_signal); //Wait for the client to come over and submit order (PID info)
 

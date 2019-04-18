@@ -17,6 +17,8 @@ using namespace std;
 int main(int argc, char *argv[]) {
 
   /* Some default server values */
+  int serviceTime = 5;
+  int breakTime = 5;
   int shmid = -1; //-1 means using SHMKEY to generate the SHM rather than shmid
 
   /* Initialize our shared memory segment */
@@ -35,8 +37,26 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
-  while(1){
-    
+   while(1){
+     int total_server_queue_sem;
+     if (sem_getvalue(&shmdata -> total_server_queue_sem, &total_server_queue_sem) == -1){
+       perror("Could not get value of total_server_queue_sem");
+       exit(1);
+     }
+     /* If there are clients waiting then signal that server is ready. */
+     if (total_server_queue_sem > 0){
+       D printf("Server told client to tell her order information.\n");
+       sem_wait(&shmdata -> total_server_queue_sem); //Decrement total_server_queue_sem
+       sem_post(&shmdata -> server_queue_sem); //Tells client to come over.
+       /* serve the client */
+       sleep(serviceTime);
+       sem_post(&shmdata -> client_signal);
+       printf("Done servicing the client.\n");
+     } else {
+       /* Otherwise, we take a break and unlock control.*/
+       D printf("There is nobody in queue, taking a break. \n");
+       sleep(breakTime);
+     }
   }
 
 

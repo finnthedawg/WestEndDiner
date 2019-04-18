@@ -29,13 +29,14 @@ struct sharedData{
   sem_t totalserved_sem; //Initialized to 0. Incremented by new clients when leaving. Last client checks if equal to TOTALPEOPLE
   sem_t coordinator_sem; //Initialized to 0. Signal by last client.
 
-  sem_t total_queue_sem; //Initialized to 0. Incremented by clients entering queue. Decremented by cashier.
+  sem_t total_cashier_queue_sem; //Initialized to 0. Incremented by clients entering queue. Decremented by cashier.
   sem_t cashier_queue_sem; //Initialized to 0. Decremented by clients in queue. Incremented by cashier when ready.
   sem_t cashier_signal; //Initialized to 0. Cashier waits for the chosen client to finish submitting clientpid.
   int clientpid; //clientpid will be put here awaiting for cashier to retrieve.
 
-  sem_t server_queue_sem; //Initialized to 0. Decrements by clients in queue.
-  sem_t server_signal; //Initialized to 0. Server waits for the chosen client to finish submitting serverClientPid.
+  sem_t total_server_queue_sem; //Initialized to 0. Incremented by clients entering queue. Decremented by server.
+  sem_t server_queue_sem; //Initialized to 0. Decremented by clients in queue. Incremented by server when ready.
+  sem_t client_signal; //Initialized to 0. Client waits for server to signal on it.
   int serverClientPid; //serverClientPid will be put here awaiting for server to retrieve.
 
   int numclients; //Number of clients

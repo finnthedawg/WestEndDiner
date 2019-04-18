@@ -39,8 +39,8 @@ int main(int argc, char *argv[]) {
     perror("Failed to initialize coordinator_sem");
     exit(-1);
   }
-  if (sem_init(&shmdata -> total_queue_sem,1,0) == -1){
-    perror("Failed to initialize total_queue_sem");
+  if (sem_init(&shmdata -> total_cashier_queue_sem,1,0) == -1){
+    perror("Failed to initialize total_cashier_queue_sem");
     exit(-1);
   }
   if (sem_init(&shmdata -> totalserved_sem,1,0) == -1){
@@ -63,8 +63,16 @@ int main(int argc, char *argv[]) {
     perror("Failed to initialize cashier_lock_sem");
     exit(-1);
   }
-  if (sem_init(&shmdata -> server_queue_sem,1,1) == -1){
+  if (sem_init(&shmdata -> total_server_queue_sem,1,0) == -1){
+    perror("Failed to initialize total_server_queue_sem");
+    exit(-1);
+  }
+  if (sem_init(&shmdata -> server_queue_sem,1,0) == -1){
     perror("Failed to initialize server_queue_sem");
+    exit(-1);
+  }
+  if (sem_init(&shmdata -> client_signal,1,0) == -1){
+    perror("Failed to initialize client_signal");
     exit(-1);
   }
   D printf("Initialized all semaphores: %d\n",shmid);
