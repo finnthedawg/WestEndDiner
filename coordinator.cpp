@@ -113,7 +113,7 @@ void printOrders(struct clientData clients[TOTALPEOPLE]){
       continue;
     }
     printf("Client ID:%d ",clients[i].pid);
-    printf("Time in shop: %d", clients[0].time_in_shop);
+    printf("Time in shop: %d", clients[i].time_in_shop);
     printf("Waited for cashier %d(s) cook %d(s) and server %d(s)\n", clients[i].time_cashier_waiting, clients[i].time_food_waiting, clients[i].time_server_waiting);
   }
 }
