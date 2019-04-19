@@ -10,7 +10,10 @@
 
 using namespace std;
 
+/* Prints the orders of customers in our database */
 void printOrders(struct clientData clients[TOTALPEOPLE]);
+/* Prints average waiting times for every customer */
+void printAvgWaiting(struct clientData clients[TOTALPEOPLE]);
 
 int main(int argc, char *argv[]) {
   string waitInput;
@@ -89,6 +92,7 @@ int main(int argc, char *argv[]) {
   cin >> waitInput;
   /* After the last client has left, create summary information */
   printOrders(shmdata->clients);
+  printAvgWaiting(shmdata->clients);
 
 
   /*Mark SHM to be destroyed*/
@@ -113,7 +117,27 @@ void printOrders(struct clientData clients[TOTALPEOPLE]){
       continue;
     }
     printf("Client ID:%d ",clients[i].pid);
-    printf("Time in shop: %d", clients[i].time_in_shop);
+    printf("Time in shop: %d(s) ", clients[i].time_in_shop);
+    printf("Spent: $%.2f", clients[i].money_spent);
     printf("Waited for cashier %d(s) cook %d(s) and server %d(s)\n", clients[i].time_cashier_waiting, clients[i].time_food_waiting, clients[i].time_server_waiting);
   }
+}
+
+void printAvgWaiting(struct clientData clients[TOTALPEOPLE]){
+  int customers = 0;
+  int TotalcashierWait = 0;
+  int TotalfoodWait = 0;
+  int TotalserverWait = 0;
+  for (int i = 0; i < TOTALPEOPLE; i++){
+    if (clients[i].pid == -1){
+      continue;
+    }
+    customers ++;
+    TotalcashierWait += clients[i].time_cashier_waiting;
+    TotalfoodWait += clients[i].time_food_waiting;
+    TotalserverWait += clients[i].time_server_waiting;
+  }
+  printf("Average waiting in cashier queue %f\n", (float)TotalcashierWait/customers);
+  printf("Average waiting for food %f\n", (float)TotalfoodWait/customers);
+  printf("Average in server queue %f\n", (float)TotalserverWait/customers);
 }
