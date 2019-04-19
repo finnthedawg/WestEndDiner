@@ -144,3 +144,14 @@ void printAvgWaiting(struct clientData clients[TOTALPEOPLE]){
   printf("Average waiting for food %f\n", (float)TotalfoodWait/customers);
   printf("Average in server queue %f\n", (float)TotalserverWait/customers);
 }
+
+
+void topnitems(struct clientData clients[TOTALPEOPLE], int n){
+  for (int i = 0; i < TOTALPEOPLE; i++){
+    if (clients[i].pid == -1){
+      continue;
+    }
+    //TODO
+    //Use a map to see which are the top items.
+  }
+}
