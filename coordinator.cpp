@@ -85,6 +85,17 @@ int main(int argc, char *argv[]) {
   printf("Completed initialization. shmid is: %d\n",shmid);
 
   cin >> waitInput;
+  /* After the last client has left, create summary information */
+  cout << shmdata->clients[0].pid << endl;
+  cout << shmdata->clients[0].itemId << endl;
+  cout << shmdata->clients[0].description << endl;
+  cout << shmdata->clients[0].money_spent << endl;
+  cout << shmdata->clients[0].time_in_shop << endl;
+  cout << shmdata->clients[0].time_cashier_waiting << endl;
+  cout << shmdata->clients[0].time_food_waiting << endl;
+  cout << shmdata->clients[0].time_server_waiting << endl;
+  
+
   /*Mark SHM to be destroyed*/
   if (shmctl(shmid, IPC_RMID, 0) == -1){
     perror("shm could be removed");

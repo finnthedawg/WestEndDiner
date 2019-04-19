@@ -112,7 +112,11 @@ int main(int argc, char *argv[]) {
 
   /*Wait in cashier_queue_sem until a cashier is ready */
   printf("Waiting in queue for cashier. Position(%d) \n", total_cashier_queue_sem+1);
+  int totalTime = time(0);
+  int cashierTime = time(0);
   sem_wait(&shmdata -> cashier_queue_sem); //Cashier calls  us
+  cashierTime = time(0) - cashierTime;
+  thisClient->time_cashier_waiting = cashierTime;
 
   /* Submit out order to cashier */
   shmdata->clientpid = getpid();
@@ -128,17 +132,20 @@ int main(int argc, char *argv[]) {
   /* Wait for food to be cooked */
   printf("Waiting for %s to be cooked... \n", description);
   sleep(cooking_time);
+  thisClient->time_food_waiting = cooking_time;
   printf("Food is ready... \n");
 
   /*Wait in server_queue_sem until a cashier is ready */
   if (sem_getvalue(&shmdata -> total_server_queue_sem, &total_server_queue_sem) == -1){
     perror("Could not get value of total_server_queue_sem");
-    sem_post(&shmdata -> lock_sem);
     exit(1);
   }
   printf("Waiting to be seated by server. Position(%d) \n", total_server_queue_sem+1);
-  sem_post(&shmdata -> total_server_queue_sem);
+  sem_post(&shmdata -> total_server_queue_sem); //So clients can track position in queue.
+  int serverTime = time(0);
   sem_wait(&shmdata -> server_queue_sem);
+  serverTime = time(0) - serverTime;
+  thisClient->time_server_waiting = serverTime; //Record our time in database
   printf("Server called us. \n");
   sem_wait(&shmdata -> client_signal);
   printf("Server has finished seating us. \n");
@@ -147,6 +154,8 @@ int main(int argc, char *argv[]) {
   sleep(eatTime);
   printf("Finished eating! \n");
   /* Record time spent in shop */
+  totalTime = time(0)- totalTime;
+  thisClient->time_in_shop = totalTime;
   printf("Client has left the restaurant \n");
 
 }

@@ -37,7 +37,9 @@ struct clientData{
   char description[STRLEN];
   float money_spent;
   int time_in_shop;
-  int time_waiting;
+  int time_cashier_waiting;
+  int time_food_waiting;
+  int time_server_waiting;
   sem_t paid_sem; //Cashier will signal when client has paid.
 };
 
