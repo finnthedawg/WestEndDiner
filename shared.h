@@ -33,6 +33,11 @@ static struct item createStruct(char* itemLine);
 /* Information about the client  */
 struct clientData{
   int pid;
+  int itemId;
+  char description[STRLEN];
+  float money_spent;
+  int time_in_shop;
+  int time_waiting;
   sem_t paid_sem; //Cashier will signal when client has paid.
 };
 

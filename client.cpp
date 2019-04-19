@@ -107,15 +107,23 @@ int main(int argc, char *argv[]) {
   sem_post(&shmdata -> total_cashier_queue_sem);
   sem_post(&shmdata -> lock_sem);
 
+  /*Get pointer to our client struct in the array*/
+  struct clientData* thisClient = getClientById(getpid(), shmdata->clients);
 
   /*Wait in cashier_queue_sem until a cashier is ready */
   printf("Waiting in queue for cashier. Position(%d) \n", total_cashier_queue_sem+1);
   sem_wait(&shmdata -> cashier_queue_sem); //Cashier calls  us
+
+  /* Submit out order to cashier */
   shmdata->clientpid = getpid();
+  thisClient->itemId = itemId;
+  strcpy(thisClient->description, description);
+  thisClient->money_spent = price;
   sem_post(&shmdata -> cashier_signal);
-  printf("Cashier called us, and we submitted order. Waiting to be serviced \n");
-  sem_wait(&getClientById(getpid(), shmdata->clients)->paid_sem);
-  printf("Cashier has finally serviced us and took our money. \n");
+  printf("Cashier called us, and we submitted order. Getting serviced...\n");
+
+  sem_wait(&thisClient->paid_sem);
+  printf("Cashier has serviced us and we paid our money. \n");
 
   /* Wait for food to be cooked */
   printf("Waiting for %s to be cooked... \n", description);
@@ -138,5 +146,7 @@ int main(int argc, char *argv[]) {
   printf("Begin eating... \n");
   sleep(eatTime);
   printf("Finished eating! \n");
+  /* Record time spent in shop */
   printf("Client has left the restaurant \n");
+
 }
