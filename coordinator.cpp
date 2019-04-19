@@ -10,6 +10,8 @@
 
 using namespace std;
 
+void printOrders(struct clientData clients[TOTALPEOPLE]);
+
 int main(int argc, char *argv[]) {
   string waitInput;
   struct sharedData *shmdata; //Our data struct stored in shared memory
@@ -86,15 +88,8 @@ int main(int argc, char *argv[]) {
 
   cin >> waitInput;
   /* After the last client has left, create summary information */
-  cout << shmdata->clients[0].pid << endl;
-  cout << shmdata->clients[0].itemId << endl;
-  cout << shmdata->clients[0].description << endl;
-  cout << shmdata->clients[0].money_spent << endl;
-  cout << shmdata->clients[0].time_in_shop << endl;
-  cout << shmdata->clients[0].time_cashier_waiting << endl;
-  cout << shmdata->clients[0].time_food_waiting << endl;
-  cout << shmdata->clients[0].time_server_waiting << endl;
-  
+  printOrders(shmdata->clients);
+
 
   /*Mark SHM to be destroyed*/
   if (shmctl(shmid, IPC_RMID, 0) == -1){
@@ -110,4 +105,15 @@ int main(int argc, char *argv[]) {
   }
   D printf("Detached shared memory with SHMID: %d\n",shmid);
 
+}
+
+void printOrders(struct clientData clients[TOTALPEOPLE]){
+  for (int i = 0; i < TOTALPEOPLE; i++){
+    if (clients[i].pid == -1){
+      continue;
+    }
+    printf("Client ID:%d ",clients[i].pid);
+    printf("Time in shop: %d", clients[0].time_in_shop);
+    printf("Waited for cashier %d(s) cook %d(s) and server %d(s)\n", clients[i].time_cashier_waiting, clients[i].time_food_waiting, clients[i].time_server_waiting);
+  }
 }

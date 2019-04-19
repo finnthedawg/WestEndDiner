@@ -21,6 +21,7 @@ int main(int argc, char *argv[]) {
   int itemId = 9;
   int eatTime = 10;
   int shmid;
+  srand(time(0)); //randomize with time seed
 
   /* Parse our arguments */
   int opt;
@@ -43,8 +44,6 @@ int main(int argc, char *argv[]) {
         break;
     }
   }
-  srand(time(0)); //randomize with time seed
-  eatTime = rand() % eatTime;
 
   printf("I am client %d, ordering itemID %d, eatTime is %d\n", getpid(), itemId, eatTime);
 
@@ -151,7 +150,7 @@ int main(int argc, char *argv[]) {
   printf("Server has finished seating us. \n");
 
   printf("Begin eating... \n");
-  sleep(eatTime);
+  sleep(rand() % eatTime);
   printf("Finished eating! \n");
   /* Record time spent in shop */
   totalTime = time(0)- totalTime;
