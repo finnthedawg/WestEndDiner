@@ -16,6 +16,8 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 
+  srand(time(0)); //randomize with time seed
+
   /* Some default server values */
   int serviceTime = 5;
   int breakTime = 5;
@@ -49,13 +51,13 @@ int main(int argc, char *argv[]) {
        sem_wait(&shmdata -> total_server_queue_sem); //Decrement total_server_queue_sem
        sem_post(&shmdata -> server_queue_sem); //Tells client to come over.
        /* serve the client */
-       sleep(serviceTime);
+       sleep(rand() % serviceTime);
        sem_post(&shmdata -> client_signal);
        printf("Done servicing the client.\n");
      } else {
        /* Otherwise, we take a break and unlock control.*/
        D printf("There is nobody in queue, taking a break. \n");
-       sleep(breakTime);
+       sleep(rand() % breakTime);
      }
   }
 
