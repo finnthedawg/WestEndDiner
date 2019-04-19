@@ -91,8 +91,11 @@ int main(int argc, char *argv[]) {
 
   cin >> waitInput;
   /* After the last client has left, create summary information */
+  printf("*****-------------------------------------------------*******\n\n");
   printOrders(shmdata->clients);
+  printf("*****-------------------------------------------------*******\n\n");
   printAvgWaiting(shmdata->clients);
+  printf("*****-------------------------------------------------*******\n\n");
 
 
   /*Mark SHM to be destroyed*/

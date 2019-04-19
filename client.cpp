@@ -150,7 +150,7 @@ int main(int argc, char *argv[]) {
   printf("Server has finished seating us. \n");
 
   printf("Begin eating... \n");
-  sleep(rand() % eatTime);
+  sleep((rand()%eatTime)+1);
   printf("Finished eating! \n");
   /* Record time spent in shop */
   totalTime = time(0)- totalTime;

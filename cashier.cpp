@@ -19,6 +19,7 @@ int main(int argc, char *argv[]) {
   int serviceTime = 10;
   int breakTime = 10;
   int shmid = -1; //-1 means using SHMKEY to generate the SHM rather than shmid
+  srand(time(0)); //randomize with time seed
 
   /* Parse our arguments */
   int opt;
@@ -41,9 +42,6 @@ int main(int argc, char *argv[]) {
         break;
     }
   }
-  srand(time(0)); //randomize with time seed
-  serviceTime = rand() % serviceTime;
-  breakTime = rand() % breakTime;
 
   /* Initialize our shared memory segment */
   struct sharedData *shmdata; //Our data struct stored in shared memory
@@ -81,14 +79,14 @@ int main(int argc, char *argv[]) {
       sem_post(&shmdata -> cashier_lock_sem); //Unlock cashiers and lets other cashiers call people.
 
       printf("Servicing the client: %d.\n", pid);
-      sleep(serviceTime); //Serve the client.
+      sleep((rand()%serviceTime)+1);
       sem_post(&getClientById(pid, shmdata->clients)->paid_sem);
       printf("Done servicing the client: %d\n",pid);
     } else {
       /* Otherwise, we take a break and unlock control.*/
       D printf("There is nobody in queue, taking a break. \n");
       sem_post(&shmdata -> cashier_lock_sem); //Unlock this cashier
-      sleep(breakTime);
+      sleep((rand()%breakTime)+1);
     }
 
   }

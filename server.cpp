@@ -47,17 +47,17 @@ int main(int argc, char *argv[]) {
      }
      /* If there are clients waiting then signal that server is ready. */
      if (total_server_queue_sem > 0){
-       D printf("Server told client to tell her order information.\n");
+       D printf("Call a client to come over.\n");
        sem_wait(&shmdata -> total_server_queue_sem); //Decrement total_server_queue_sem
        sem_post(&shmdata -> server_queue_sem); //Tells client to come over.
        /* serve the client */
-       sleep(rand() % serviceTime);
+       sleep((rand()%serviceTime)+1);
        sem_post(&shmdata -> client_signal);
        printf("Done servicing the client.\n");
      } else {
        /* Otherwise, we take a break and unlock control.*/
        D printf("There is nobody in queue, taking a break. \n");
-       sleep(rand() % breakTime);
+       sleep((rand()%breakTime)+1);
      }
   }
 
