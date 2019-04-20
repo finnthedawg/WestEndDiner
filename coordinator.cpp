@@ -14,6 +14,8 @@ using namespace std;
 void printOrders(struct clientData clients[TOTALPEOPLE]);
 /* Prints average waiting times for every customer */
 void printAvgWaiting(struct clientData clients[TOTALPEOPLE]);
+/* Prints the number of clients served and the total revenue */
+void printClientsRevenue(struct clientData clients[TOTALPEOPLE]);
 
 int main(int argc, char *argv[]) {
   string waitInput;
@@ -96,7 +98,8 @@ int main(int argc, char *argv[]) {
   printf("*****-------------------------------------------------*******\n\n");
   printAvgWaiting(shmdata->clients);
   printf("*****-------------------------------------------------*******\n\n");
-
+  printClientsRevenue(shmdata->clients);
+  printf("*****-------------------------------------------------*******\n\n");
 
   /*Mark SHM to be destroyed*/
   if (shmctl(shmid, IPC_RMID, 0) == -1){
@@ -140,13 +143,25 @@ void printAvgWaiting(struct clientData clients[TOTALPEOPLE]){
     TotalfoodWait += clients[i].time_food_waiting;
     TotalserverWait += clients[i].time_server_waiting;
   }
-  printf("Average waiting in cashier queue %f\n", (float)TotalcashierWait/customers);
-  printf("Average waiting for food %f\n", (float)TotalfoodWait/customers);
-  printf("Average in server queue %f\n", (float)TotalserverWait/customers);
+  printf("Average waiting in cashier queue %.2f seconds\n", (float)TotalcashierWait/customers);
+  printf("Average waiting for food %.2f seconds\n", (float)TotalfoodWait/customers);
+  printf("Average in server queue %.2f seconds\n", (float)TotalserverWait/customers);
 }
 
+void printClientsRevenue(struct clientData clients[TOTALPEOPLE]){
+  int customers = 0;
+  float revenue = 0;
+  for (int i = 0; i < TOTALPEOPLE; i++){
+    if (clients[i].pid == -1){
+      continue;
+    }
+    customers ++;
+    revenue += clients[i].money_spent;
+  }
+  printf("Served a total of %d clients generating $%.2f in revenue\n", customers, revenue);
+}
 
-void topnitems(struct clientData clients[TOTALPEOPLE], int n){
+void printTopNItems(struct clientData clients[TOTALPEOPLE], int n){
   for (int i = 0; i < TOTALPEOPLE; i++){
     if (clients[i].pid == -1){
       continue;
