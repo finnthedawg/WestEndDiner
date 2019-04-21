@@ -52,10 +52,6 @@ int main(int argc, char *argv[]) {
     perror("Failed to initialize total_cashier_queue_sem");
     exit(-1);
   }
-  if (sem_init(&shmdata -> totalserved_sem,1,0) == -1){
-    perror("Failed to initialize totalserved_sem");
-    exit(-1);
-  }
   if (sem_init(&shmdata -> cashier_queue_sem,1,0) == -1){
     perror("Failed to initialize cashier_queue_sem");
     exit(-1);
@@ -88,27 +84,29 @@ int main(int argc, char *argv[]) {
 
   /* Zero out the client array.*/
   shmdata -> numclients = 0;
+  shmdata -> total_served = 0;
   for (int i = 0; i < TOTALPEOPLE; i ++){
     shmdata->clients[i].pid = -1;
   }
   D printf("Initialized all clients. \n");
   printf("Completed initialization. shmid is: %d\n",shmid);
+  cout << "Summary statistics will be printed after we serve (%d) customers" << endl;
+  sem_wait(&shmdata -> coordinator_sem);
 
-  cin >> waitInput;
   /* After the last client has left, create summary information */
   printf("*****-------------------------------------------------*******\n");
   printf("\n");
   printOrders(shmdata->clients);
   printf("\n");
-  printf("*****-------------------------------------------------*******\n\n");
+  printf("*****-------------------------------------------------*******\n");
   printf("\n");
   printAvgWaiting(shmdata->clients);
   printf("\n");
-  printf("*****-------------------------------------------------*******\n\n");
+  printf("*****-------------------------------------------------*******\n");
   printf("\n");
   printClientsRevenue(shmdata->clients);
   printf("\n");
-  printf("*****-------------------------------------------------*******\n\n");
+  printf("*****-------------------------------------------------*******\n");
   printf("\n");
   printTopNItems(shmdata->clients, 5);
   printf("\n");
@@ -136,8 +134,8 @@ void printOrders(struct clientData clients[TOTALPEOPLE]){
     }
     printf("Client ID:%d ",clients[i].pid);
     printf("Time in shop: %d(s) ", clients[i].time_in_shop);
-    printf("Spent: $%.2f", clients[i].money_spent);
-    printf("Waited for cashier %d(s) cook %d(s) and server %d(s)\n", clients[i].time_cashier_waiting, clients[i].time_food_waiting, clients[i].time_server_waiting);
+    printf("Spent: $%.2f ", clients[i].money_spent);
+    printf("In queue of cashier %d(s) cook %d(s) and server %d(s)\n", clients[i].time_cashier_waiting, clients[i].time_food_waiting, clients[i].time_server_waiting);
   }
 }
 

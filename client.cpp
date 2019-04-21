@@ -81,17 +81,24 @@ int main(int argc, char *argv[]) {
   }
   D printf("Attached shared memory with SHMID: %d\n",shmid);
 
-  /*Before entering the queue, check the number of people */
+
+  /*Check if client can enter the queue. */
   sem_wait(&shmdata -> lock_sem);
-  int total_cashier_queue_sem;
-  int total_server_queue_sem;
+  int total_cashier_queue_sem; //People in cashier queue
+  /* Check if we have exceeded the queue size */
   if (sem_getvalue(&shmdata -> total_cashier_queue_sem, &total_cashier_queue_sem) == -1){
     perror("Could not get value of total_cashier_queue_sem");
     sem_post(&shmdata -> lock_sem);
     exit(1);
   }
-  if (total_cashier_queue_sem >= MAXQUEUE){
+  if (total_cashier_queue_sem+1 >= MAXQUEUE){
     printf("Leaving because there are (%d) people in the queue. \n", total_cashier_queue_sem);
+    sem_post(&shmdata -> lock_sem);
+    exit(0);
+  }
+  /* Check if we have exceeded the total number of clients */
+  if (shmdata->numclients >= TOTALPEOPLE){
+    printf("Leaving because (%d) people have entered. \n", shmdata->numclients);
     sem_post(&shmdata -> lock_sem);
     exit(0);
   }
@@ -102,9 +109,10 @@ int main(int argc, char *argv[]) {
     exit(-1);
   }
   shmdata->clients[shmdata->numclients].pid = getpid();
-  shmdata->numclients ++;
+  shmdata->numclients++;
   sem_post(&shmdata -> total_cashier_queue_sem);
   sem_post(&shmdata -> lock_sem);
+  printf("We are the (%d) client to enter \n", shmdata->numclients);
 
   /*Get pointer to our client struct in the array*/
   struct clientData* thisClient = getClientById(getpid(), shmdata->clients);
@@ -135,6 +143,7 @@ int main(int argc, char *argv[]) {
   printf("Food is ready... \n");
 
   /*Wait in server_queue_sem until a cashier is ready */
+  int total_server_queue_sem;
   if (sem_getvalue(&shmdata -> total_server_queue_sem, &total_server_queue_sem) == -1){
     perror("Could not get value of total_server_queue_sem");
     exit(1);
@@ -152,9 +161,21 @@ int main(int argc, char *argv[]) {
   printf("Begin eating... \n");
   sleep((rand()%eatTime)+1);
   printf("Finished eating! \n");
+
   /* Record time spent in shop */
   totalTime = time(0)- totalTime;
   thisClient->time_in_shop = totalTime;
   printf("Client has left the restaurant \n");
+
+  /* If we are the last client, signal to coordinator we are done */
+  sem_wait(&shmdata -> lock_sem);
+    cout << shmdata->total_served;
+    if (shmdata->total_served+1 >= TOTALPEOPLE){
+      sem_post(&shmdata -> coordinator_sem);
+    } else{
+      shmdata->total_served ++;
+    }
+  sem_post(&shmdata -> lock_sem);
+
 
 }
