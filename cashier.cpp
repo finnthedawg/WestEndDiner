@@ -46,10 +46,12 @@ int main(int argc, char *argv[]) {
   /* Initialize our shared memory segment */
   struct sharedData *shmdata; //Our data struct stored in shared memory
 
-  /* Load our previous SHM associated with SHMKEY*/
-  if ((shmid = shmget (SHMKEY, sizeof(struct sharedData), 0)) < 0){
-    perror("Shmget could not obtain segment");
-    exit(1);
+  /* Load our previous SHM associated with SHMKEY, else use default*/
+  if (shmid == -1){
+    if ((shmid = shmget (SHMKEY, sizeof(struct sharedData), 0)) < 0){
+      perror("Shmget could not obtain segment");
+      exit(1);
+    }
   }
   D printf("Obtaining shared memory with SHMID: %d\n",shmid);
 
