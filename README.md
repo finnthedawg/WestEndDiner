@@ -76,9 +76,17 @@ In order to implement the program, a flowchart was designed to break down projec
   <img width="750"  src="./WestEndFlowchart.png">
 </p>
 
-In order to build this, I used a number of semaphores and a shared memory structure to communicate between the processes represented by server, client and cashier.
+In order to build this, I used a number of semaphores and a shared memory structure to communicate between the processes represented by server, client and cashier. The following pseudocode explains the logic of the program.
+
 * Coordinator:
+
 ```
+1. Create and attach all of our semaphores.
+2. Initialize and zero out an array of `struct clientData clients[TOTALPEOPLE]``
+3. sem_wait(&shmdata -> coordinator_sem); //Waits for the last client to leave.
+4. Print summary statistics
+5. Mark the SHM to be deleted.
+6. Detach the shared memory
 ```
 
 ---
