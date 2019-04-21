@@ -5,6 +5,7 @@
 #include <fcntl.h>           /* For O_* constants */
 #include <sys/stat.h>        /* For mode constants */
 #include <semaphore.h>
+#include <vector>
 
 #include "shared.h"
 
@@ -16,6 +17,8 @@ void printOrders(struct clientData clients[TOTALPEOPLE]);
 void printAvgWaiting(struct clientData clients[TOTALPEOPLE]);
 /* Prints the number of clients served and the total revenue */
 void printClientsRevenue(struct clientData clients[TOTALPEOPLE]);
+/* Prints the top N most popular items and revenue */
+void printTopNItems(struct clientData clients[TOTALPEOPLE], int n);
 
 int main(int argc, char *argv[]) {
   string waitInput;
@@ -93,13 +96,22 @@ int main(int argc, char *argv[]) {
 
   cin >> waitInput;
   /* After the last client has left, create summary information */
-  printf("*****-------------------------------------------------*******\n\n");
+  printf("*****-------------------------------------------------*******\n");
+  printf("\n");
   printOrders(shmdata->clients);
+  printf("\n");
   printf("*****-------------------------------------------------*******\n\n");
+  printf("\n");
   printAvgWaiting(shmdata->clients);
+  printf("\n");
   printf("*****-------------------------------------------------*******\n\n");
+  printf("\n");
   printClientsRevenue(shmdata->clients);
+  printf("\n");
   printf("*****-------------------------------------------------*******\n\n");
+  printf("\n");
+  printTopNItems(shmdata->clients, 5);
+  printf("\n");
 
   /*Mark SHM to be destroyed*/
   if (shmctl(shmid, IPC_RMID, 0) == -1){
@@ -162,11 +174,45 @@ void printClientsRevenue(struct clientData clients[TOTALPEOPLE]){
 }
 
 void printTopNItems(struct clientData clients[TOTALPEOPLE], int n){
+  struct itemOrder{
+    int itemId;
+    char description[STRLEN];
+    float totalSpent;
+    int timesOrdered;
+  };
+  vector<struct itemOrder> orders;
+  /* Populate the summary statistics */
   for (int i = 0; i < TOTALPEOPLE; i++){
     if (clients[i].pid == -1){
       continue;
     }
-    //TODO
-    //Use a map to see which are the top items.
+    /*Add or append counts for each order in orderArray */
+    vector<struct itemOrder>::iterator it;
+    it = find_if(orders.begin(), orders.end(), [&](struct itemOrder item){
+      return item.itemId ==  clients[i].itemId;
+    });
+    /* Increment the values of existing struct or create it */
+    if (it != orders.end()){
+      (*it).totalSpent += clients[i].money_spent;
+      (*it).timesOrdered++;
+    } else {
+      struct itemOrder newOrder;
+      newOrder.itemId = clients[i].itemId;
+      strcpy(newOrder.description, clients[i].description);
+      newOrder.totalSpent = clients[i].money_spent;
+      newOrder.timesOrdered = 1;
+      orders.push_back(newOrder);
+    }
+  }
+
+  /* Sort the vector based on the orderCount */
+  sort(orders.begin(), orders.end(), [](struct itemOrder item1, struct itemOrder item2){
+    return item1.timesOrdered > item2.timesOrdered;
+  });
+
+  /* Print the top 5 */
+  for (int i = 0; i < n && i < orders.size(); i++){
+    printf("%d. id %d, %s, ordered %d times generating: %.2f\n",
+    i, orders[i].itemId, orders[i].description, orders[i].timesOrdered, orders[i].totalSpent);
   }
 }
