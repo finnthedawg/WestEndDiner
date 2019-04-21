@@ -21,7 +21,6 @@ void printClientsRevenue(struct clientData clients[TOTALPEOPLE]);
 void printTopNItems(struct clientData clients[TOTALPEOPLE], int n);
 
 int main(int argc, char *argv[]) {
-  string waitInput;
   struct sharedData *shmdata; //Our data struct stored in shared memory
   int shmid;
   void *shmaddr; /* Pointer to head of shm*/

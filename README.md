@@ -76,4 +76,9 @@ In order to implement the program, a flowchart was designed to break down projec
   <img width="750"  src="./WestEndFlowchart.png">
 </p>
 
+In order to build this, I used a number of semaphores and a shared memory structure to communicate between the processes represented by server, client and cashier.
+* Coordinator:
+```
+```
+
 ---
