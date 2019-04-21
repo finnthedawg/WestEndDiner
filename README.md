@@ -82,7 +82,7 @@ In order to implement the program, a flowchart was designed to break down projec
   <img width="750"  src="./WestEndFlowchart.png">
 </p>
 
-In order to build this, I used a number of semaphores and a shared memory structure to communicate between the processes represented by server, client and cashier. The following pseudocode explains the logic of the program.
+In order to build this, I used a number of semaphores and a shared memory structure to communicate between the processes represented by server, client and cashier. The following pseudocode illustrates the semaphores and SHM data used to synchronize the various processes.
 
 * Coordinator:
 
@@ -100,7 +100,7 @@ In order to build this, I used a number of semaphores and a shared memory struct
 ```
 1. If shmid is specified, shmat(shmid) else shmget(SHMKEY)
 loop {
-  wait(Lock the cashier_lock_sem)
+  wait(Lock the cashier_lock_sem) //Ensure only one cashier is called
   Check the value of total_cashier_queue_sem is > 0.{
     wait(total_cashier_queue_sem) //Decrement the total queue.
     signal(cashier_queue_sem) // Signals a clien to come over,
@@ -143,6 +143,23 @@ loop {
 19. Lock the lock_sem. //To ensure integrity.
 20. If we are the last person, signal(coordinator_sem)
 21. Unlock the lock_sem
+```
+
+* Server:
+
+```
+1. If shmid is specified, shmat(shmid) else shmget(SHMKEY)
+loop {
+  Check the value of total_server_queue_sem is > 0.{
+    wait(total_server_queue_sem) //Decrease the queue count. For tracking purposes.
+    signal(server_queue_sem) //Tells client to come over.
+    /* Serve the client */
+    signal(client_signal) //Tells client we are done.
+  } else {
+    //take a break
+  }
+}
+
 ```
 
 ---
