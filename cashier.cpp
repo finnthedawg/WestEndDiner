@@ -12,7 +12,7 @@
 #include "shared.h"
 
 using namespace std;
-/* Options: ./client -s serviceTime -b breakTime -m shmid */
+/* Options: ./cashier -s serviceTime -b breakTime -m shmid */
 int main(int argc, char *argv[]) {
 
   /* Some default cashier values */

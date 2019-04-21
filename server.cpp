@@ -14,6 +14,7 @@
 
 using namespace std;
 
+/* Options: ./server -s serviceTime -b breakTime -m shmid */
 int main(int argc, char *argv[]) {
 
   srand(time(0)); //randomize with time seed
@@ -22,6 +23,28 @@ int main(int argc, char *argv[]) {
   int serviceTime = 5;
   int breakTime = 5;
   int shmid = -1; //-1 means using SHMKEY to generate the SHM rather than shmid
+
+  /* Parse our arguments */
+  int opt;
+  while((opt = getopt(argc, argv, "s:b:m:")) != -1){
+    switch(opt){
+      case 's':
+        printf("serviceTime set to %s\n", optarg);
+        serviceTime = stoi(optarg);
+        break;
+      case 'b':
+        printf("Max breakTime set to %s\n", optarg);
+        breakTime = stoi(optarg);
+        break;
+      case 'm':
+        printf("shmid set to %s\n", optarg);
+        shmid = stoi(optarg);
+        break;
+      case '?':
+        printf("Unknown flag: %s\n", optarg);
+        break;
+    }
+  }
 
   /* Initialize our shared memory segment */
   struct sharedData *shmdata; //Our data struct stored in shared memory

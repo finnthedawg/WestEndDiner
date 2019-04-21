@@ -1,8 +1,7 @@
 #!/bin/bash
-x-terminal-emulator -e /home/finn/Desktop/OS/diner/WestEndDiner/keepalive.sh ./cashier
-x-terminal-emulator -e /home/finn/Desktop/OS/diner/WestEndDiner/keepalive.sh ./cashier
+x-terminal-emulator -e /home/finn/Desktop/OS/diner/WestEndDiner/keepalive.sh ./cashier -s 5 -b 10
+x-terminal-emulator -e /home/finn/Desktop/OS/diner/WestEndDiner/keepalive.sh ./cashier -s 3 -b 3
 x-terminal-emulator -e /home/finn/Desktop/OS/diner/WestEndDiner/keepalive.sh ./server
-x-terminal-emulator -e /home/finn/Desktop/OS/diner/WestEndDiner/keepalive.sh ./client
 x-terminal-emulator -e /home/finn/Desktop/OS/diner/WestEndDiner/keepalive.sh ./client
 x-terminal-emulator -e /home/finn/Desktop/OS/diner/WestEndDiner/keepalive.sh ./client
 x-terminal-emulator -e /home/finn/Desktop/OS/diner/WestEndDiner/keepalive.sh ./client
