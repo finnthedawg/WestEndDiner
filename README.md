@@ -51,7 +51,7 @@ $ ./coordinator
 ```
 The coordinator will output a `shmid` shared memory ID. You can pass this using the flag -m to our cashier/client/servers. However, You can also execute the programs because the same `SHMKEY (key_t)` is used to acquire the shared memory segment across the programs.
 
-To run the Cashier / Client / Servers
+To run the `Cashier` / `Client` / `Server`
 ```
 $ ./cashier -s serviceTime -b breakTime e.g -s 5 -b 10
 $ ./server -s serviceTime -b breakTime e.g -s 3 -b 3
@@ -65,8 +65,10 @@ You can change the following settings in `shared.h`
 #define STRLEN 1024
 ```
 
+The csv menu can also be changed in `menu.txt`
 
 ---
+#### Implementation details
 
 In order to implement the program, a flowchart was designed to break down project as seen below:
 
