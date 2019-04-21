@@ -163,3 +163,12 @@ loop {
 ```
 
 ---
+*Future works:*
+
+Termination correction functionality. If any of the `cashier`, `server` or `client` terminates unexpectedly then the synchronization of the whole restaurant will be affected. Error correcting mechanisms would be useful to recover the state of semaphores in case of such events.
+
+---
+
+#### Related readings.
+1. http://www.cs.rochester.edu/u/sandhya/csc458/lectures/shared_memory.pdf
+2. http://pages.cs.wisc.edu/~remzi/OSTEP/threads-sema.pdf
