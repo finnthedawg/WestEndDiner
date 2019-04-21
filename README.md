@@ -95,5 +95,54 @@ In order to build this, I used a number of semaphores and a shared memory struct
 6. Detach the shared memory
 ```
 
+* Cashier:
+
+```
+1. If shmid is specified, shmat(shmid) else shmget(SHMKEY)
+loop {
+  wait(Lock the cashier_lock_sem)
+  Check the value of total_cashier_queue_sem is > 0.{
+    wait(total_cashier_queue_sem) //Decrement the total queue.
+    signal(cashier_queue_sem) // Signals a clien to come over,
+    wait(cashier_signal) //Wait for client to come and write details down.
+
+    int pid = shm clientpid
+    signal(cashier_lock_sem) //Unlock cashier and lets other cashiers serve
+
+    //Service the client
+    // Find client block in our struct clientData clients struct;
+    sem_post(paid_sem) //Tell the client that he is good to go.
+  } else {
+    signal(cashier_lock_sem) //Unlock the cashier
+    //take a break
+  }
+
+}
+```
+
+* Client:
+
+```
+1. Find the details of the order in menu.
+2. If shmid is specified, shmat(shmid) else shmget(SHMKEY)
+3. wait(lock_sem) //Lock the vector to ensure integrity
+4. Check if total_cashier_queue_sem+1 is >= MAXQUEUE; Exit
+5. Check if shm numclents >= TOTALPEOPLE; exit
+6. Add our information to array of clients. sem_init our cashier semaphore.
+7. signal(total_cashier_queue_sem) //Increase the number of people in queue.
+8. signal (lock_sem) //Unlock array
+9. signal(cashier_signal)
+10. wait(cashier_queue_sem) //Cashier calls us
+11. Write order into SHM and signal(cashier_signal) to say we are done.
+12. sem_wait(paid_sem) on our client's semaphore to wait for us to pay.
+13. Wait for food to be cooked.
+14. signal(total_server_queue_sem) // So clients can track their position.
+15. wait(server_queue_sem) //Wait for server to cal us.
+16. wait(client_signal) //Server is done seating us.
+17. Eat food.
+19. Lock the lock_sem. //To ensure integrity.
+20. If we are the last person, signal(coordinator_sem)
+21. Unlock the lock_sem
+```
 
 ---
