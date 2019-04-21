@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
   /* Some default client values */
   int itemId = 9;
   int eatTime = 10;
-  int shmid;
+  int shmid = -1;
   srand(time(0)); //randomize with time seed
 
   /* Parse our arguments */
