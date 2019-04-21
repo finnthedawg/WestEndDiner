@@ -82,7 +82,7 @@ In order to implement the program, a flowchart was designed to break down projec
   <img width="750"  src="./WestEndFlowchart.png">
 </p>
 
-In order to build this, I used a number of semaphores and a shared memory structure to communicate between the processes represented by server, client and cashier. The following pseudocode illustrates the semaphores and SHM data used to synchronize the various processes.
+In order to build this, I used a number of semaphores, an array of client semaphores, and a shared memory structure to communicate between the processes represented by server, client and cashier. The following pseudocode illustrates the semaphores and SHM data used to synchronize the various processes.
 
 * Coordinator:
 
