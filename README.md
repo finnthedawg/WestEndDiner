@@ -57,7 +57,13 @@ $ ./cashier -s serviceTime -b breakTime e.g -s 5 -b 10
 $ ./server -s serviceTime -b breakTime e.g -s 3 -b 3
 $ ./client -i itemId -e eatingTime e.g -i 8 -e 2
 ```
-You can change the following settings in `shared.h`
+The script `spawn.sh` coordinates and simulates `13 clients` accessing the restaurant with `2 cashiers` and `1 server`. It can be modified to any number of clients and cashiers. The `keepalive.sh` script is needed to keep the terminal open after spawning and executing our command.
+```
+./spawn.sh
+```
+
+
+You can change program settings in `shared.h`
 ```
 #define TOTALPEOPLE 10 //Total number of people that can be served by restaurant before shutting down
 #define MAXQUEUE 5 //Maximum number of people in queue.
@@ -65,7 +71,7 @@ You can change the following settings in `shared.h`
 #define STRLEN 1024
 ```
 
-The csv menu can also be changed in `menu.txt`
+The csv menu can also be modified or added to in `menu.txt`
 
 ---
 #### Implementation details
@@ -88,5 +94,6 @@ In order to build this, I used a number of semaphores and a shared memory struct
 5. Mark the SHM to be deleted.
 6. Detach the shared memory
 ```
+
 
 ---
