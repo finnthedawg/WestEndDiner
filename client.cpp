@@ -67,10 +67,12 @@ int main(int argc, char *argv[]) {
   struct sharedData *shmdata; //Our data struct stored in shared memory
   void *shmaddr; /* Pointer to head of shm*/
 
-  /* Load our previous SHM associated with SHMKEY*/
-  if ((shmid = shmget (SHMKEY, sizeof(struct sharedData), 0)) < 0){
-    perror("Shmget could not create segment");
-    exit(1);
+  /* Load our previous SHM associated with SHMKEY if shmid is not specified*/
+  if (shmid == -1){
+    if ((shmid = shmget (SHMKEY, sizeof(struct sharedData), 0)) < 0){
+      perror("Shmget could not obtain segment");
+      exit(1);
+    }
   }
   D printf("Creating shared memory with SHMID: %d\n",shmid);
 
